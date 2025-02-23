@@ -1,0 +1,24 @@
+name: main_deploy
+on: 
+  pull_request:
+    branches:
+      main 
+jobs:
+  build:
+    name: building_docker
+    runs-on: ubuntu-latest
+    steps:
+    - name: compose_docker_images
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: github_runner
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        #job stops in case docker compose fails, debug information available 
+        script_stop: true
+        debug: true
+        script: 
+          cd /tmp/docker_compose/
+          docker compose up -d --build
+          docker ps
